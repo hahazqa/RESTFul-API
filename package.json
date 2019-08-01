@@ -5,14 +5,19 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js"
+    "start": "cross-env NODE_ENV=production node app/index.js",
+    "dev": "nodemon app/index.js"
   },
   "author": "ZJ",
   "license": "ISC",
   "dependencies": {
-    "koa": "^2.7.0"
+    "koa": "^2.7.0",
+    "koa-bodyparser": "^4.2.1",
+    "koa-json-error": "^3.1.2",
+    "koa-router": "^7.4.0"
   },
   "devDependencies": {
+    "cross-env": "^5.2.0",
     "nodemon": "^1.19.1"
   }
 }
