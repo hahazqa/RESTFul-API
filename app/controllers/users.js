@@ -1,28 +1,43 @@
-const db = [
-  {
-    name: "张三"
-  }
-];
+const User = require("../models/users");
 class UsersCtl {
-  find(ctx) {
-    ctx.body = db;
+  async find(ctx) {
+    ctx.body = await User.find();
   }
-  findById(ctx) {
-    if (parseInt(ctx.params.id) >= db.length) {
-        ctx.throw(412,'先决条件失败');
+  async findById(ctx) {
+    const user = (ctx.body = await User.findById(ctx.params.id));
+    if (!user) {
+      ctx.throw("404");
     }
-    ctx.body = db[parseInt(ctx.params.id)];
+    ctx.body = user;
   }
-  create(ctx) {
-    db.push(ctx.request.body);
-    ctx.body = ctx.request.body;
+  async create(ctx) {
+    ctx.verifyParams({
+      name: {
+        type: "string",
+        required: true
+      }
+    });
+    const user = await new User(ctx.request.body).save();
+    ctx.body = user;
   }
-  update(ctx) {
-    db[parseInt(ctx.params.id)] = ctx.request.body;
-    ctx.body = ctx.request.body;
+  async update(ctx) {
+    ctx.verifyParams({
+      name: {
+        type: "string",
+        required: true
+      }
+    });
+    const user = await User.findByIdAndUpdate(ctx.params.id,ctx.request.body);
+    if (!user) {
+      ctx.throw("404");
+    }
+    ctx.body = user;
   }
-  delete(ctx) {
-    db.splice(parseInt(ctx.params.id), 1);
+  async delete(ctx) {
+    const user = await User.findByIdAndRemove(ctx.params.id);
+    if (!user) {
+      ctx.throw("404", "用户不存在");
+    }
     ctx.status = 204;
   }
 }
