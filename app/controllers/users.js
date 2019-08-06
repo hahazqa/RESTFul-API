@@ -32,6 +32,12 @@ class UsersCtl {
     const user = await new User(ctx.request.body).save();
     ctx.body = user;
   }
+  async checkOwner (ctx ,next) {
+    if(ctx.params.id !== ctx.state.user._id) {
+      ctx.throw(403,"没有权限");
+    }
+    await next()
+  }
   async update(ctx) {
     ctx.verifyParams({
       name: {
