@@ -5,11 +5,13 @@ const {
   findById,
   create,
   update,
-  delete: del
+  delete: del,
+  login
 } = require("../controllers/users");
 router.get("/", find);
 
 router.post("/", create);
+router.post("/login", login);
 
 router.get("/:id", findById);
 router.patch("/:id", update);
