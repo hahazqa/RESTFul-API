@@ -31,7 +31,7 @@ router.get("/", find);
 
 router.post("/", create);
 router.post("/login", login);
-
+   
 router.get("/:id", findById);
 router.patch("/:id", auth, checkOwner, update);
 router.delete("/:id", auth, checkOwner, del);

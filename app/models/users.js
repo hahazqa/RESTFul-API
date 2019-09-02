@@ -31,6 +31,10 @@ const userSchema = new Schema({
       }
     ],
     select: false
+  },
+  follwing: {
+    type: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    select: false
   }
 });
 

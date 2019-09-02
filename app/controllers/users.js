@@ -112,6 +112,9 @@ class UsersCtl {
     const token = jsonwebtoken.sign({ _id, name }, secret, { expiresIn: "1d" });
     ctx.body = {token};
   }
+  async listFollowing(ctx) {
+    const user = await User.findById(ctx.params.id).select('+following').populate('following')
+  }
 }
 
 module.exports = new UsersCtl();
