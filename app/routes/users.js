@@ -12,6 +12,7 @@ const {
   checkOwner,
   listFollowing,
   listFollowers,
+  checkUserExist,
   follow,
   unfollow
 } = require("../controllers/users");
@@ -37,11 +38,11 @@ router.post("/", create);
 router.post("/login", login);
 router.get("/:id/following", listFollowing);
 router.get("/:id/followers", listFollowers);
-router.put("/following/:id", auth, follow);
+router.put("/following/:id", auth,checkUserExist, follow);
    
 router.get("/:id", findById);
 router.patch("/:id", auth, checkOwner, update);
 router.delete("/:id", auth, checkOwner, del);
-router.delete("/following/:id", auth, unfollow);
+router.delete("/following/:id", auth,checkUserExist, unfollow);
 
 module.exports = router;
