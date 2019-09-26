@@ -5,7 +5,7 @@ class TopicsCtl {
     const { per_page = 10 } = ctx.query;
     const page = Math.max(parseInt(ctx.query.page), 1) - 1;
     const perPage = Math.max(parseInt(per_page), 1);
-    ctx.body = await Topic.find()
+    ctx.body = await Topic.find({ name: new RegExp(ctx.query.q) })  //模糊搜索
       .limit(perPage)
       .skip(page * perPage);
   }

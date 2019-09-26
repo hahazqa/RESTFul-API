@@ -6,13 +6,13 @@ class UsersCtl {
     const { per_page = 10 } = ctx.query;
     const page = Math.max(parseInt(ctx.query.page), 1) - 1;
     const perPage = Math.max(parseInt(per_page), 1);
-    ctx.body = await User.find()
+    ctx.body = await User.find({ name: new RegExp(ctx.query.q) })
       .limit(perPage)
       .skip(page * perPage);
   }
   async findById(ctx) {
     //字段过滤
-    const { fields = '' } = ctx.query;
+    const { fields = "" } = ctx.query;
     const selectFields = fields
       .split(";")
       .filter(f => f)
@@ -135,10 +135,10 @@ class UsersCtl {
     ctx.body = users;
   }
   //检查用户存在与否
-  async checkUserExist(ctx,next) {
+  async checkUserExist(ctx, next) {
     const user = await User.findById(ctx.params.id);
-    if(!user) {
-      ctx.throw(404,'用户不存在');
+    if (!user) {
+      ctx.throw(404, "用户不存在");
     }
     await next();
   }
