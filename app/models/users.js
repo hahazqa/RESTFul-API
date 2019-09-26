@@ -14,17 +14,25 @@ const userSchema = new Schema({
     required: true
   },
   headline: { type: String },
-  locations: { type: [{ type: String }], select: false },
-  business: { type: String, select: false },
+  locations: {
+    type: [{ type: Schema.Types.ObjectId, ref: "Topics" }],
+    select: false
+  },
+  business: { type: Schema.Types.ObjectId, ref: "Topics", select: false },
   employments: {
-    type: [{ company: { type: String }, job: { type: String } }],
+    type: [
+      {
+        company: { type: Schema.Types.ObjectId, ref: "Topics" },
+        job: { type: Schema.Types.ObjectId, ref: "Topics" }
+      }
+    ],
     select: false
   },
   educations: {
     type: [
       {
-        school: { type: String },
-        major: { type: String },
+        school: { type: Schema.Types.ObjectId, ref: "Topics" },
+        major: { type: Schema.Types.ObjectId, ref: "Topics" },
         diploma: { type: Number, enum: [1, 2, 3, 4, 5] },
         entrance_year: { type: Number },
         graduation_year: { type: Number }
