@@ -17,7 +17,8 @@ const {
   unfollow,
   followTopic,
   unfollowTopic,
-  listFollowingTopics
+  listFollowingTopics,
+  listQuestions
 } = require("../controllers/users");
 
 const {
@@ -46,6 +47,7 @@ router.post("/login", login);
 router.get("/:id/following", listFollowing);
 router.get("/:id/followTopics", listFollowingTopics);
 router.get("/:id/followers", listFollowers);
+router.get("/:id/questions", listQuestions);
 router.put("/following/:id", auth,checkUserExist, follow);
 router.put("/followTopics/:id", auth, checkTopicExist, followTopic);
    
