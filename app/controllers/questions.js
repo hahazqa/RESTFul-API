@@ -25,16 +25,16 @@ class QuestionsCtl {
       .filter(f => f)
       .map(f => " +" + f)
       .join("");
-    const questions = await Question.findById(ctx.params.id).select(selectFields).populate('questioner');
+    const questions = await Question.findById(ctx.params.id).select(selectFields).populate('questioner topics');
     ctx.body = questions;
   }
   async create(ctx) {
     ctx.verifyParams({
-      title: { type: "string", required: true },
-      description: {type: "string", required: false}
+      title: { type: 'string', required: true },
+      description: { type: 'string', required: false },
     });
-    const questions = await new Question({...ctx.request.body, questioner: ctx.state.user._id }).save();
-    ctx.body = questions;
+    const question = await new Question({ ...ctx.request.body, questioner: ctx.state.user._id }).save();
+    ctx.body = question;
   }
   async checkQuestioner (ctx, next) {
     const { question } = ctx.state;

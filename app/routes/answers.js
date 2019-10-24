@@ -1,16 +1,16 @@
 // const jsonwebtoken = require("jsonwebtoken");
 const jwt = require("koa-jwt");
 const Router = require("koa-router");
-const router = new Router({ prefix: "/topics" }); //前缀路由
+const router = new Router({ prefix: "/questions/:questionId/answers" }); //前缀路由
 const {
   find,
   findById,
   create,
   update,
-  listFollowers,
-  checkTopicExist,
-  listQuestions
-} = require("../controllers/topics");
+  checkAnswerExist,
+  checkAnswerer,
+  delete:del
+} = require("../controllers/answers");
 
 const { secret } = require("../config");
 const auth = jwt({ secret });
@@ -29,8 +29,7 @@ const auth = jwt({ secret });
 
 router.get("/", find);
 router.post("/", auth, create);   
-router.get("/:id",checkTopicExist, findById);
-router.patch("/:id", auth,checkTopicExist, update);
-router.get("/:id/followers", checkTopicExist,listFollowers);
-router.get("/:id/questions", checkTopicExist,listQuestions);
+router.get("/:id",checkAnswerExist, findById);
+router.patch("/:id", auth,checkAnswerExist,checkAnswerer, update);
+router.delete("/:id", auth,checkAnswerExist,checkAnswerer, del);
 module.exports = router;

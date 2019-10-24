@@ -1,6 +1,6 @@
 const jsonwebtoken = require("jsonwebtoken");
 const User = require("../models/users");
-const Uuestion = require("../models/questions");
+const Questions = require("../models/questions");
 const { secret } = require("../config");
 class UsersCtl {
   async find(ctx) {
