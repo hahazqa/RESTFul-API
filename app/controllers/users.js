@@ -1,6 +1,7 @@
 const jsonwebtoken = require("jsonwebtoken");
 const User = require("../models/users");
 const Questions = require("../models/questions");
+const Answer = require("../models/answers");
 const { secret } = require("../config");
 class UsersCtl {
   async find(ctx) {
@@ -19,20 +20,22 @@ class UsersCtl {
       .filter(f => f)
       .map(f => " +" + f)
       .join("");
-    const populateStr = fields.split(';').filter(f => f).map(f => {
-      if (f === 'employments') {
-        return 'employments.company employments.job';
-      }
-      if (f === 'educations') {
-        return 'educations.school educations.major';
-      }
-      return f;
-    }).join(' ');  
+    const populateStr = fields
+      .split(";")
+      .filter(f => f)
+      .map(f => {
+        if (f === "employments") {
+          return "employments.company employments.job";
+        }
+        if (f === "educations") {
+          return "educations.school educations.major";
+        }
+        return f;
+      })
+      .join(" ");
     const user = await User.findById(ctx.params.id)
       .select(selectFields)
-      .populate(
-        populateStr
-      );
+      .populate(populateStr);
     if (!user) {
       ctx.throw("404");
     }
@@ -183,7 +186,9 @@ class UsersCtl {
     ctx.body = user.followingTopics;
   }
   async followTopic(ctx) {
-    const me = await User.findById(ctx.state.user._id).select("+followingTopics");
+    const me = await User.findById(ctx.state.user._id).select(
+      "+followingTopics"
+    );
     if (!me.followingTopics.map(id => id.toString()).includes(ctx.params.id)) {
       me.followingTopics.push(ctx.params.id);
       me.save();
@@ -191,8 +196,12 @@ class UsersCtl {
     ctx.status = 204;
   }
   async unfollowTopic(ctx) {
-    const me = await User.findById(ctx.state.user._id).select("+followingTopics");
-    const index = me.followingTopics.map(id => id.toString()).indexOf(ctx.params.id);
+    const me = await User.findById(ctx.state.user._id).select(
+      "+followingTopics"
+    );
+    const index = me.followingTopics
+      .map(id => id.toString())
+      .indexOf(ctx.params.id);
     if (index > -1) {
       me.followingTopics.splice(index, 1);
       me.save();
@@ -200,9 +209,77 @@ class UsersCtl {
     ctx.status = 204;
   }
   //列出问题
-  async listQuestions (ctx) {
-    const questions = await Questions.find({ questioner: ctx.params.id});
+  async listQuestions(ctx) {
+    const questions = await Questions.find({ questioner: ctx.params.id });
     ctx.body = questions;
+  }
+  //点赞或踩答案
+
+  async listLikingAnswes(ctx) {
+    const user = await User.findById(ctx.params.id)
+      .select("+linkingAnswes")
+      .populate("linkingAnswes");
+    if (!user) {
+      ctx.throw(404, "用户不存在");
+    }
+    ctx.body = user.linkingAnswes;
+  }
+  async LikingAnswer(ctx, next) {
+    const me = await User.findById(ctx.state.user._id).select("+linkingAnswes");
+    if (!me.linkingAnswes.map(id => id.toString()).includes(ctx.params.id)) {
+      me.linkingAnswes.push(ctx.params.id);
+      me.save();
+      await Answer.findByIdAndUpdate(ctx.params.id, { $inc: { voteCount: 1 } });
+    }
+    ctx.status = 204;
+    await next();
+  }
+  async unLikingAnswer(ctx) {
+    const me = await User.findById(ctx.state.user._id).select(
+      "+linkingAnswes"
+    );
+    const index = me.linkingAnswes
+      .map(id => id.toString())
+      .indexOf(ctx.params.id);
+    if (index > -1) {
+      me.linkingAnswes.splice(index, 1);
+      await Answer.findByIdAndUpdate(ctx.params.id, { $inc: { voteCount: -1 } });
+      me.save();
+    }
+    ctx.status = 204;
+  }
+  async listDisLikingAnswes(ctx) {
+    const user = await User.findById(ctx.params.id)
+      .select("+dislinkingAnswes")
+      .populate("dislinkingAnswes");
+    if (!user) {
+      ctx.throw(404, "用户不存在");
+    }
+    ctx.body = user.linkingAnswes;
+  }
+  async disLikingAnswer(ctx,next) {
+    const me = await User.findById(ctx.state.user._id).select("+dislinkingAnswes");
+    if (!me.dislinkingAnswes.map(id => id.toString()).includes(ctx.params.id)) {
+      me.dislinkingAnswes.push(ctx.params.id);
+      me.save();
+      // await Answer.findByIdAndUpdate(ctx.params.id, { $inc: { voteCount: 1 } });
+    }
+    ctx.status = 204;
+    await next();
+  }
+  async undisLikingAnswer(ctx) {
+    const me = await User.findById(ctx.state.user._id).select(
+      "+dislinkingAnswes"
+    );
+    const index = me.linkingAnswes
+      .map(id => id.toString())
+      .indexOf(ctx.params.id);
+    if (index > -1) {
+      me.linkingAnswes.splice(index, 1);
+      // await Answer.findByIdAndUpdate(ctx.params.id, { $inc: { voteCount: -1 } });
+      me.save();
+    }
+    ctx.status = 204;
   }
 }
 

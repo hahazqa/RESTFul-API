@@ -47,7 +47,15 @@ const userSchema = new Schema({
   followingTopics: {
     type: [{ type: Schema.Types.ObjectId, ref: "Topics" }],
     select: false
-  }
+  },
+  linkingAnswes: {
+    type: [{ type: Schema.Types.ObjectId, ref: "Answer" }],
+    select: false
+  },
+  dislinkingAnswes: {
+    type: [{ type: Schema.Types.ObjectId, ref: "Answer" }],
+    select: false
+  },
 });
 
 module.exports = model("User", userSchema);
