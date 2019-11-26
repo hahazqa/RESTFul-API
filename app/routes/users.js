@@ -20,7 +20,8 @@ const {
   listFollowingTopics,
   listQuestions,
   listLikingAnswes, LikingAnswer, unLikingAnswer,
-  listDisLikingAnswes, disLikingAnswer, undisLikingAnswer
+  listDisLikingAnswes, disLikingAnswer, undisLikingAnswer,
+  listCollectingAnswes, collectAnswer, uncollectAnswer
 } = require("../controllers/users");
 
 const {
@@ -69,4 +70,8 @@ router.delete("/likingAnswers/:id", auth,checkAnswerExist, unLikingAnswer);
 router.get("/:id/dislikingAnswers", listDisLikingAnswes);
 router.put("/dislikingAnswers/:id", auth, checkAnswerExist, disLikingAnswer,unLikingAnswer);
 router.delete("/dislikingAnswers/:id", auth,checkAnswerExist, undisLikingAnswer);
+
+router.get("/:id/collectingAnswers", listCollectingAnswes);
+router.put("/collectingAnswers/:id", auth, checkAnswerExist, collectAnswer);
+router.delete("/collectingAnswers/:id", auth,checkAnswerExist, uncollectAnswer);
 module.exports = router;
