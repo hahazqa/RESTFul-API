@@ -19,6 +19,13 @@ const commentSchema = new Schema({
     type: String,
     required: true
   },
-});
+  rootCommentId: {
+    type: String,
+  },
+  replyTo: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
+},{timestamps: true});
 
 module.exports = model("Comment", commentSchema);
